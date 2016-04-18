@@ -1,0 +1,133 @@
+//vi my-fis-bin/index.js
+var fis = module.exports = require('fis3');
+fis.require.prefixes.unshift('mff');
+fis.cli.name = 'mff';
+fis.cli.info = require('./package.json');
+// 重置命令列表
+fis.set('modules.commands', ['init', 'release', 'server']);
+// 重置help信息
+fis.cli.help = (function(oldHelp) {
+return function(cmdName, options, commands) {
+  if (!cmdName) {
+    commands = {};
+    fis.media().get('modules.commands', []).forEach(function(name) {
+      var cmd = fis.require('command', name);
+      name = cmd.name || name;
+      name = fis.util.pad(name, 12);
+      commands[name] = cmd.desc || '';
+    });
+
+    options =  {
+      '-h, --help': 'print this help message',
+      '-v, --version': 'print product version and exit'
+    };
+    cmdName = '<command>';
+  }
+  oldHelp(cmdName, options, commands)
+}
+}(fis.cli.help))
+// 重置版本信息
+fis.cli.version = require('./version.js');
+
+// 服务类型
+fis.set('server.type', 'jello')
+
+// 配置目录规范和部署规范
+fis
+.hook('commonjs', {
+  // 配置项
+})
+.match('{page,widget}/**.jsp', {
+  release: '/views/$0'
+})
+
+.match('({widget,ui}/**.{js,css})', {
+  isMod: true,
+  useHash: true,
+  release: '/public/$1'
+})
+
+.match('static/(**)', {
+  useHash: true,
+  release: '/public/$1'
+})
+
+.match('package.json', {
+  release: false
+})
+
+// global end
+
+
+// 后端联调时
+fis.media('backend')
+
+.match('({widget,ui}/**.{js,css})', {
+  url: '${devDomain}/public/$1'
+})
+
+.match('static/(**)', {
+  url: '${devDomain}/public/$1'
+})
+
+.match('{WEB-INF/**,test/**}', {
+  release: false
+})
+
+.match('*', {
+  deploy: fis.plugin('local-deliver', {
+    to: '${devServer}/webapps${devDomain}'
+  })
+})
+
+// 提交代码前
+fis.media('commit')
+
+.match('{WEB-INF/**,test/**}', {
+  release: false
+})
+.match('*', {
+  deploy: fis.plugin('local-deliver', {
+    to: "../"
+  })
+})
+
+// .match('**.js', {
+//     optimizer: fis.plugin('uglify-js')
+// })
+
+// .match('**.css', {
+//     optimizer: fis.plugin('clean-css')
+// })
+// 
+// fis.match('*.png', {
+  // optimizer: fis.plugin('png-compressor')
+// });
+
+//替换里面的 <fis:widget id="widget/header/header"/>
+
+//fis.match('::package', {
+//  postpackager: function(ret, conf, settings, opt) {
+//    // ret.src 所有的源码，结构是 {'<subpath>': <File 对象>}
+//      // ret.ids 所有源码列表，结构是 {'<id>': <File 对象>}
+//      // ret.map 如果是 spriter、postpackager 这时候已经能得到打包结果了，
+//      //         可以修改静态资源列表或者其他
+//    
+//    
+//      fis.util.map(ret.src, function(subpath, file){
+//          //有isViews标记才需要做替换
+//          if(file.isViews){
+//              var content = file.getContent();
+//              //替换文件内容
+//              content = content.replace(/<fis:widget [^>]*id=['"]([^'"]+)[^>]*>/gi, function (match, id) {
+//                var release = ret.ids[id].release
+//                 
+//                return '<%@ include file="' + release + '"%>'
+//            });
+//              file.setContent(content);
+//          }
+//      });
+//  }
+//});
+
+

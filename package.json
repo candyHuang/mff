@@ -1,0 +1,33 @@
+{
+  "name": "mff",
+  "version": "0.1.0",
+  "description": "framework base on fis3 and jsp",
+  "main": "index.js",
+  "bin": {
+    "mff": "mff.js"
+  },
+  "dependencies": {
+    "fis3": "^3.3.26",
+    "liftoff": "^2.2.1",
+    "minimist": "^1.2.0",
+    "mff-command-init": "^0.2.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/candyHuang/mff.git"
+  },
+  "keywords": [
+    "fis3",
+    "mff"
+  ],
+  "author": "candyHuang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/candyHuang/mff/issues"
+  },
+  "homepage": "https://github.com/candyHuang/mff#readme"
+}
