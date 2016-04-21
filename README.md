@@ -14,6 +14,7 @@ test   # 数据mock文件
 
 ## 部署规范
 
+```bash
 |---public # 静态资源
 	|---ui
 	|---widget
@@ -22,6 +23,7 @@ test   # 数据mock文件
 |---views  # jsp模板
 	|---page
 	|---widget
+```
 
 
 ## 使用方法
