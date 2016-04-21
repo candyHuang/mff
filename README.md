@@ -36,3 +36,98 @@ mff
 * mff release 
 * mff server start
 * mff release -w
+
+
+## jsp标签使用方法
+
+* 使用``<fis:root>``包裹页面
+* 使用``<fis:require>``替代传统``<link href>``,``<script src>``标签来加载静态资源
+* 使用``<fis:styles/>``标签显示``<fis:require>``标签收集到的所有css资源
+* 使用``<fis:scripts/>``标签显示``<fis:require>``标签收集到的所有js资源
+* 使用``<fis:script>``标签代替传统``<script>``标签，它可以帮你收集页面上的js统一放到尾部
+
+实例如下：
+
+```jsp
+<%@ page contentType="text/html;charset=utf-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/fis" prefix="fis"%>
+<fis:root>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	<title>index</title>
+	<%-- 使用<fis:require>替代传统<link href>、<script src>标签来加载静态资源 --%>
+    <fis:require id="static/lib/mod/mod.js"/>
+    <fis:require id="static/lib/jquery/1.11.3/jquery.min.js" />
+    <fis:require id="static/lib/bootstrap/3.3.5/bootstrap.js" />
+    <fis:require id="static/lib/bootstrap/3.3.5/bootstrap.scss" />
+    <fis:require id="static/common/1.0.0/app.scss" />
+    <fis:require id="static/common/1.0.0/app.js" />
+    <%-- 使用<fis:styles/>标签显示<fis:require>标签收集到的所有css资源 --%>
+    <fis:styles/>
+</head>
+<body>
+    <div class="wrapper">
+        <%@ include file="../widget/header/header.jsp"%>
+        <%@ include file="../widget/aside/aside.jsp"%>
+
+        <div class="main-content">
+            <!-- 顶部标签页 -->
+            <section class="main-content-tabs hide">
+                <ul class="nav nav-tabs nav-blue draggable"></ul>
+            </section>
+            <!-- 内容区 -->
+            <section class="content hide">
+                <div class="tab-content"></div>
+            </section>
+            <!-- 首页内容 -->
+            <section class="index-content"></section>
+        </div>
+    </div>
+   <%-- 使用<fis:script>标签代替传统<script>标签，它可以帮你收集页面上的js统一放到尾部 --%>
+    <fis:script>
+       console.log('零散的脚本');
+    </fis:script>
+	<%-- 使用<fis:scripts/>标签显示<fis:require>标签收集到的所有js资源 --%>
+    <fis:scripts/>
+</body>
+</html>
+</fis:root>
+```
+
+## 数据模拟
+
+为了开发方便，我们提供给jsp注入模拟数据。只需要简单几步
+
+* 在 test 下的 ``server.properties`` 建立映射条件 url=file
+* 建立file文件，并在文件中写入需要模拟的数据
+
+如： 
+
+```
+//server.properties
+
+index.jsp=index.json
+someurl=somefile
+# 这是properties中的注释
+
+
+//index.json
+{
+	"list": [
+		{
+			"productName": "macBook",
+			"price": "120.00"
+		},
+		{
+			"productName": "macBook Pro",
+			"price": "220.00"
+		}
+	]
+}
+```
+
