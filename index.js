@@ -47,6 +47,10 @@ fis
   release: '/public/$1'
 })
 
+.match('*.min.{js,css}', {
+  optimizer: null
+})
+
 .match('static/(**)', {
   useHash: true,
   release: '/public/$1'
@@ -54,6 +58,21 @@ fis
 
 .match('package.json', {
   release: false
+})
+
+.match('_*.{scss,css,js}', {
+  release: false
+})
+
+.match('*.{eot,svg,ttf,woff,woff2}', {
+  useHash: false
+})
+
+.match('*.scss', {
+  rExt: '.css',
+  parser: fis.plugin('node-sass', {
+    // options...
+  })
 })
 
 // global end
