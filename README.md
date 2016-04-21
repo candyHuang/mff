@@ -6,11 +6,13 @@ mff
 
 ###开发规范
 
-page   #后端页面jsp
-static # 非模块的资源 如：lib
-widget # 包含后端模板的组件 （js,css,jsp）
-ui     # 通用组件 （js, css）
-test   # 数据mock文件
+```bash
+|---page   #后端页面jsp
+|---static # 非模块的资源 如：lib
+|---widget # 包含后端模板的组件 （js,css,jsp）
+|---ui     # 通用组件 （js, css）
+|---test   # 数据mock文件
+```
 
 ## 部署规范
 
