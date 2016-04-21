@@ -34,11 +34,17 @@ fis.set('server.type', 'jello')
 
 // 配置目录规范和部署规范
 fis
+
 .hook('commonjs', {
   // 配置项
 })
+
 .match('{page,widget}/**.jsp', {
   release: '/views/$0'
+})
+
+.match('{page,widget}/**.html', {
+  release: '/public/$0'
 })
 
 .match('({widget,ui}/**.{js,css})', {
