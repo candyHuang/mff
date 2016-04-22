@@ -30,7 +30,8 @@ return function(cmdName, options, commands) {
 fis.cli.version = require('./version.js');
 
 // 服务类型
-fis.set('server.type', 'jello')
+fis.set('server.type', 'jello');
+fis.set('project.fileType.text', 'handlebars');
 
 // 配置目录规范和部署规范
 fis
@@ -39,27 +40,34 @@ fis
   // 配置项
 })
 
-.match('{page,widget}/**.jsp', {
-  release: '/views/$0'
-})
-
-.match('{page,widget}/**.html', {
-  release: '/public/$0'
-})
-
-.match('({widget,ui}/**.{js,css})', {
+.match('({widget,ui}/**)', {
   isMod: true,
   useHash: true,
   release: '/public/$1'
 })
 
-.match('*.min.{js,css}', {
-  optimizer: null
+
+.match('{page,widget}/**.jsp', {
+  useHash: false,
+  release: '/views/$0'
+})
+
+.match('{page,widget}/**.html', {
+  useHash: false,
+  release: '/public/$0'
 })
 
 .match('static/(**)', {
   useHash: true,
   release: '/public/$1'
+})
+
+.match('*.{eot,svg,ttf,woff,woff2}', {
+  useHash: false
+})
+
+.match('*.min.{js,css}', {
+  optimizer: null
 })
 
 .match('package.json', {
@@ -70,15 +78,15 @@ fis
   release: false
 })
 
-.match('*.{eot,svg,ttf,woff,woff2}', {
-  useHash: false
-})
-
 .match('*.scss', {
   rExt: '.css',
-  parser: fis.plugin('node-sass', {
-    // options...
-  })
+  parser: fis.plugin('node-sass')
+})
+
+.match('*.handlebars', {
+  release: false,
+    rExt: '.handlebars',
+    parser: fis.plugin('handlebars-4.x')
 })
 
 // global end
