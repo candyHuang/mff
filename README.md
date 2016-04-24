@@ -30,12 +30,20 @@ mff
 
 ## 使用方法
 
-* 安装node环境
-* 安转java环境
+* 安装 [node](https://nodejs.org/en/) 环境
+* 安转 [java](http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html) 环境 （注意配置环境变量哟）
 * npm install -g mff
+* mff init (初始化项目脚手架)
 * mff release 
 * mff server start
 * mff release -w
+
+> 注意： 可能出现npm安装特别慢，建议用淘宝源
+
+```
+npm install -g cnpm --registry=https://registry.npm.taobao.org
+```
+然后用 **cnpm** 代替 **npm** 执行相关命名
 
 
 ## jsp标签使用方法
@@ -102,7 +110,8 @@ mff
 
 ## 数据模拟
 
-> [随机数据占位符]（http://mockjs.com/examples.html#Random.datetime(%20format?%20))
+> 采用 [mockjs](http://mockjs.com/) 产生随机数据 
+> [随机数据占位符,戳这儿](http://mockjs.com/examples.html)
 
 
 ### jsp页面 数据模拟
