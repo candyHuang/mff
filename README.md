@@ -60,6 +60,7 @@ mff
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 	<title>index</title>
+    <!-- __MOCK_PLACEHOLDER__ -->
 	<%-- 使用<fis:require>替代传统<link href>、<script src>标签来加载静态资源 --%>
     <fis:require id="static/lib/mod/mod.js"/>
     <fis:require id="static/lib/jquery/1.11.3/jquery.min.js" />
@@ -101,6 +102,11 @@ mff
 
 ## 数据模拟
 
+> [随机数据占位符]（http://mockjs.com/examples.html#Random.datetime(%20format?%20))
+
+
+### jsp页面 数据模拟
+
 为了开发方便，我们提供给jsp注入模拟数据。只需要简单几步
 
 * 在 test 下的 ``server.properties`` 建立映射条件 url=file
@@ -118,16 +124,49 @@ someurl=somefile
 
 //index.json
 {
-	"list": [
-		{
-			"productName": "macBook",
-			"price": "120.00"
-		},
-		{
-			"productName": "macBook Pro",
-			"price": "220.00"
-		}
-	]
+    "ctitle": "@ctitle",
+    "csentence": "@csentence",
+    "cparagraph": "@cparagraph",
+    "cname": "@cname",
+    "float": "@float",
+    "list|2-5": [
+        {
+            "name": "@cname",
+            "age": "@integer"
+        }
+    ]
 }
 ```
+
+### ajax 数据模拟
+
+* 在ajax所在页面添加占位符 ``<!-- __MOCK_PLACEHOLDER__ -->``， 需要在jquery库前
+* 只需要在 test 下的 ``ajax-conf.js`` 中设置url以及返回的数据
+
+
+```json
+{
+    "url_1": {
+        "ctitle": "@ctitle",
+        "csentence": "@csentence",
+        "cparagraph": "@cparagraph",
+        "cparagraph": "@cparagraph",
+        "cname": "@cname",
+        "natrue": "@natural",
+        "float": "@float"
+    },
+    "url_2": {
+        "list|1-10": [{
+            "id": "@id",
+            "integer": "@integer(10000)",
+            "date": "@date(yyyy-MM-dd)",
+            "time": "@time",
+            "datetime": "@datetime",
+            "city": "@city"
+        }]
+
+    }
+}
+```
+
 

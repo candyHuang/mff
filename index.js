@@ -1,5 +1,7 @@
 //vi my-fis-bin/index.js
 var fis = module.exports = require('fis3');
+var mockutil = require('./mockutil.js');
+
 fis.require.prefixes.unshift('mff');
 fis.cli.name = 'mff';
 fis.cli.info = require('./package.json');
@@ -33,12 +35,16 @@ fis.cli.version = require('./version.js');
 fis.set('server.type', 'jello');
 fis.set('project.fileType.text', 'handlebars');
 
+
 // 配置目录规范和部署规范
 fis
 
 .hook('commonjs', {
-  // 配置项
-})
+  // 配置项(这个暂时插件未实现)
+  ignoreDependencies: [
+    'static/lib/**'
+  ]
+})  
 
 .match('({widget,ui}/**)', {
   isMod: true,
@@ -87,6 +93,49 @@ fis
   release: false,
     rExt: '.handlebars',
     parser: fis.plugin('handlebars-4.x')
+})
+
+// 避免 commomjs 扫描非模块依赖
+.match('static/lib/**.js', {
+  checkDeps: true
+})
+.match('test/**.js', {
+  checkDeps: true
+})
+
+.match('test/**.json', {
+  isTestJson: true
+})
+
+.match('::package', {
+  postpackager: function (ret, conf, settings, opt) {
+    // ret.src 所有的源码，结构是 {'<subpath>': <File 对象>}
+    // ret.ids 所有源码列表，结构是 {'<id>': <File 对象>}
+    // ret.map 如果是 spriter、postpackager 这时候已经能得到打包结果了，
+
+    var idsMap = ret.ids;
+
+    fis.util.map(ret.map.res, function(id, info){
+      var file = idsMap[id];
+      
+      if(file && file.checkDeps && info.deps){
+        var arr = info.deps,
+          i, el;
+        for (i = arr.length - 1; i >= 0; i--) {
+          el = arr[i]
+
+          if (!idsMap[el]) {
+            arr.splice(i, 1)
+          }
+        }
+        if (info.deps.length === 0) {
+          delete info.deps
+        }
+      }
+    });
+    // 数据mock
+    mockutil.mock(fis, ret.src)
+  }
 })
 
 // global end
