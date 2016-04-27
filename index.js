@@ -35,21 +35,25 @@ fis.cli.version = require('./version.js');
 fis.set('server.type', 'jello');
 fis.set('project.fileType.text', 'handlebars');
 
-
 // 配置目录规范和部署规范
 fis
 
 .hook('commonjs', {
   // 配置项(这个暂时插件未实现)
   ignoreDependencies: [
-    'static/lib/**'
+    'static/lib/**',
+    'test/**'
   ]
 })  
 
-.match('({widget,ui}/**)', {
+.match('{page,widget,ui}/**', {
   isMod: true,
   useHash: true,
-  release: '/public/$1'
+  release: '/public/$0'
+})
+
+.match('page/**.js', {
+  isMod: false
 })
 
 
@@ -65,6 +69,7 @@ fis
 
 .match('static/(**)', {
   useHash: true,
+  isMod: false,
   release: '/public/$1'
 })
 
@@ -95,16 +100,13 @@ fis
     parser: fis.plugin('handlebars-4.x')
 })
 
-// 避免 commomjs 扫描非模块依赖
-.match('static/lib/**.js', {
-  checkDeps: true
-})
-.match('test/**.js', {
-  checkDeps: true
-})
-
 .match('test/**.json', {
   isTestJson: true
+})
+
+// 避免 commomjs 扫描非模块依赖
+.match('{static/lib/,test/}/**.js', {
+  ignoreDependencies: true
 })
 
 .match('::package', {
@@ -117,20 +119,8 @@ fis
 
     fis.util.map(ret.map.res, function(id, info){
       var file = idsMap[id];
-      
-      if(file && file.checkDeps && info.deps){
-        var arr = info.deps,
-          i, el;
-        for (i = arr.length - 1; i >= 0; i--) {
-          el = arr[i]
-
-          if (!idsMap[el]) {
-            arr.splice(i, 1)
-          }
-        }
-        if (info.deps.length === 0) {
-          delete info.deps
-        }
+      if(file && file.ignoreDependencies && info.deps){
+        delete info.deps
       }
     });
     // 数据mock
