@@ -23,7 +23,8 @@ mff
 	|---static
 	|---page html页面
 |---views  # jsp模板
-	|---page
+	|---module_A
+    |---module_B
 	|---widget
 ```
 

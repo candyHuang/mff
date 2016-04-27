@@ -57,9 +57,14 @@ fis
 })
 
 
-.match('{page,widget}/**.jsp', {
+.match('widget/**.jsp', {
   useHash: false,
   release: '/views/$0'
+})
+
+.match('page/(**.jsp)', {
+  useHash: false,
+  release: '/views/$1'
 })
 
 .match('{page,widget}/**.html', {
