@@ -100,9 +100,10 @@ fis
 })
 
 .match('*.handlebars', {
+  rExt: '.js',
+  isMod: false,
   release: false,
-    rExt: '.handlebars',
-    parser: fis.plugin('handlebars-4.x')
+  parser: fis.plugin('handlebars-4.x')
 })
 
 .match('test/**.json', {
