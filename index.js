@@ -1,5 +1,6 @@
 //vi my-fis-bin/index.js
 var fis = module.exports = require('fis3');
+var Mock = require('mockjs');
 var mockutil = require('./mockutil.js');
 
 fis.require.prefixes.unshift('mff');
@@ -31,6 +32,11 @@ return function(cmdName, options, commands) {
 // 重置版本信息
 fis.cli.version = require('./version.js');
 
+// 忽略项目
+var ignoreArr = fis.get('project.ignore');
+ignoreArr = ignoreArr.concat(['.svn/**', '.DS_Store', '.gitignore', '.jshintrc'])
+fis.set('project.ignore', ignoreArr);
+
 // 服务类型
 fis.set('server.type', 'jello');
 fis.set('project.fileType.text', 'handlebars');
@@ -58,12 +64,15 @@ fis
 
 
 .match('widget/**.jsp', {
+  useMap: false,
   useHash: false,
   release: '/views/$0'
 })
 
 .match('page/(**.jsp)', {
+  useMap: false,
   useHash: false,
+  useCache: false,
   release: '/views/$1'
 })
 
@@ -107,7 +116,18 @@ fis
 })
 
 .match('test/**.json', {
-  isTestJson: true
+  useCache: false,
+  preprocessor: function(content, file, settings) {
+    return JSON.stringify(Mock.mock(JSON.parse(content)));
+  }
+})
+
+.match('test/mock-main.js', {
+  useCache: false,
+  useHash: true,
+  preprocessor: function(content, file, settings) {
+    return mockutil.replaceAjaxMockScript(fis, content)
+  }
 })
 
 // 避免 commomjs 扫描非模块依赖
@@ -128,9 +148,9 @@ fis
       if(file && file.ignoreDependencies && info.deps){
         delete info.deps
       }
-    });
+    })
     // 数据mock
-    mockutil.mock(fis, ret.src)
+    mockutil.mock(fis, ret.src, idsMap)
   }
 })
 
