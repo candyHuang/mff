@@ -1,12 +1,13 @@
 //vi my-fis-bin/index.js
 var fis = module.exports = require('fis3');
+fis.require.prefixes.unshift('mff');
+fis.cli.name = 'mff';
+fis.cli.info = require('./package.json');
+
 var Mock = require('mockjs');
 var localDeliver = require('./local-deliver.js')
 var mockutil = require('./mockutil.js');
 
-fis.require.prefixes.unshift('mff');
-fis.cli.name = 'mff';
-fis.cli.info = require('./package.json');
 // 重置命令列表
 fis.set('modules.commands', ['init', 'release', 'server']);
 // 重置help信息
