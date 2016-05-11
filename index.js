@@ -1,6 +1,7 @@
 //vi my-fis-bin/index.js
 var fis = module.exports = require('fis3');
 var Mock = require('mockjs');
+var localDeliver = require('./local-deliver.js')
 var mockutil = require('./mockutil.js');
 
 fis.require.prefixes.unshift('mff');
@@ -150,7 +151,9 @@ fis
       }
     })
     // 数据mock
-    mockutil.mock(fis, ret.src, idsMap)
+    if (fis.project.currentMedia() === 'dev') {
+      mockutil.mock(fis, ret.src, idsMap)
+    }
   }
 })
 
@@ -160,7 +163,7 @@ fis
 // 后端联调时
 fis.media('backend')
 
-.match('({widget,ui}/**.{js,css})', {
+.match('({page,widget,ui}/**.{js,css})', {
   url: '${devDomain}/public/$1'
 })
 
@@ -173,13 +176,25 @@ fis.media('backend')
 })
 
 .match('*', {
-  deploy: fis.plugin('local-deliver', {
-    to: '${devServer}/webapps${devDomain}'
-  })
+  deploy: function(options, modified, total, next) {
+    var server = fis.config.get('devServer')
+    var domain = fis.config.get('devDomain')
+
+    options.to = server + '/webapps' + domain
+    localDeliver(options, modified, total, next)
+  }
 })
 
 // 提交代码前
 fis.media('commit')
+
+.match('({page,widget,ui}/**.{js,css})', {
+  url: '${devDomain}/public/$1'
+})
+
+.match('static/(**)', {
+  url: '${devDomain}/public/$1'
+})
 
 .match('{WEB-INF/**,test/**}', {
   release: false
