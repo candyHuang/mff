@@ -5,8 +5,8 @@ fis.cli.name = 'mff';
 fis.cli.info = require('./package.json');
 
 var Mock = require('mockjs');
-var localDeliver = require('./local-deliver.js')
-var mockutil = require('./mockutil.js');
+var LocalDeliver = require('./local-deliver.js')
+var Mockutil = require('./mockutil.js');
 
 // 重置命令列表
 fis.set('modules.commands', ['init', 'release', 'server']);
@@ -75,7 +75,14 @@ fis
   useMap: false,
   useHash: false,
   useCache: false,
-  release: '/views/$1'
+  release: '/views/$1',
+  preprocessor: function(content, file, settings) {
+    // 数据模拟替换
+    if (fis.project.currentMedia() === 'dev') {
+      content = Mockutil.replacePlaceholder(content)
+    }
+    return content
+  }
 })
 
 .match('{page,widget}/**.html', {
@@ -105,10 +112,10 @@ fis
   release: false
 })
 
-.match('*.scss', {
-  rExt: '.css',
-  parser: fis.plugin('node-sass')
-})
+// .match('*.scss', {
+//   rExt: '.css',
+//   parser: fis.plugin('node-sass')
+// })
 
 .match('*.handlebars', {
   rExt: '.js',
@@ -124,11 +131,11 @@ fis
   }
 })
 
-.match('test/mock-main.js', {
+.match('test/ajax-conf.js', {
   useCache: false,
   useHash: true,
   preprocessor: function(content, file, settings) {
-    return mockutil.replaceAjaxMockScript(fis, content)
+    return mockutil.replaceAjaxMockScript(content)
   }
 })
 
@@ -151,10 +158,6 @@ fis
         delete info.deps
       }
     })
-    // 数据mock
-    if (fis.project.currentMedia() === 'dev') {
-      mockutil.mock(fis, ret.src, idsMap)
-    }
   }
 })
 
@@ -182,7 +185,7 @@ fis.media('backend')
     var domain = fis.config.get('devDomain')
 
     options.to = server + '/webapps' + domain
-    localDeliver(options, modified, total, next)
+    LocalDeliver(options, modified, total, next)
   }
 })
 
@@ -217,31 +220,3 @@ fis.media('commit')
 // fis.match('*.png', {
   // optimizer: fis.plugin('png-compressor')
 // });
-
-//替换里面的 <fis:widget id="widget/header/header"/>
-
-//fis.match('::package', {
-//  postpackager: function(ret, conf, settings, opt) {
-//    // ret.src 所有的源码，结构是 {'<subpath>': <File 对象>}
-//      // ret.ids 所有源码列表，结构是 {'<id>': <File 对象>}
-//      // ret.map 如果是 spriter、postpackager 这时候已经能得到打包结果了，
-//      //         可以修改静态资源列表或者其他
-//    
-//    
-//      fis.util.map(ret.src, function(subpath, file){
-//          //有isViews标记才需要做替换
-//          if(file.isViews){
-//              var content = file.getContent();
-//              //替换文件内容
-//              content = content.replace(/<fis:widget [^>]*id=['"]([^'"]+)[^>]*>/gi, function (match, id) {
-//                var release = ret.ids[id].release
-//                 
-//                return '<%@ include file="' + release + '"%>'
-//            });
-//              file.setContent(content);
-//          }
-//      });
-//  }
-//});
-
-
