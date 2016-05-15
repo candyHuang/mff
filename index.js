@@ -135,7 +135,7 @@ fis
   useCache: false,
   useHash: true,
   preprocessor: function(content, file, settings) {
-    return mockutil.replaceAjaxMockScript(content)
+    return Mockutil.replaceAjaxMockScript(content)
   }
 })
 
