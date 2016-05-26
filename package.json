@@ -1,6 +1,6 @@
 {
   "name": "mff",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "framework base on fis3 and jsp",
   "main": "index.js",
   "bin": {
@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "fis-parser-handlebars-4.x": "^4.0.3",
-    "fis-parser-node-sass": "^0.1.9",
     "fis3": "^3.3.26",
     "fis3-hook-commonjs": "^0.1.14",
     "fis3-server-jello": "0.0.10",
